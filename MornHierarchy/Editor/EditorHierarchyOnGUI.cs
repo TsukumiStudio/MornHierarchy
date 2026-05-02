@@ -20,7 +20,7 @@ namespace MornHierarchy {
         }
         private static void DrawLineDecoration(Rect selectionRect) {
             var lineRect = selectionRect;
-            lineRect.xMin = 32;
+            lineRect.xMin = 0;
             lineRect.xMax = Mathf.Max(lineRect.xMax,EditorGUIUtility.currentViewWidth);
             var upper = lineRect;
             upper.yMax = upper.yMin + 2;
