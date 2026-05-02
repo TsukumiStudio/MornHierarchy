@@ -53,7 +53,7 @@ namespace MornHierarchy {
             var fullRect = selectionRect;
             fullRect.xMin = 0;
             fullRect.xMax = Mathf.Max(selectionRect.xMax,EditorGUIUtility.currentViewWidth);
-            if(gameObject.TryGetComponent<MornHierarchy>(out var ownColor)) {
+            if(gameObject.TryGetComponent<MornHierarchy>(out var ownColor) && ownColor.EnableColor) {
                 DrawTransparentRect(fullRect,ownColor.BackColor);
                 return;
             }
@@ -61,6 +61,7 @@ namespace MornHierarchy {
             if(mornHiArray == null) return;
             foreach(var hi in mornHiArray) {
                 if(hi.transform == gameObject.transform) continue;
+                if(hi.EnableColor == false) continue;
                 if(hi.ApplyChildren == false) return;
                 var kFront = GetKRecursion(hi.transform,gameObject.transform);
                 DrawTransparentRect(fullRect,hi.BackColor * kFront);
