@@ -30,21 +30,10 @@ namespace MornHierarchy {
             lower.yMin = lower.yMax - 2;
             EditorGUI.DrawRect(lower,Color.black);
         }
-        private const string DefaultIconGuid = "aa566db8252f5403e8bbbb58a469ac18";
-        private static Texture2D s_defaultIcon;
-        private static Texture2D DefaultIcon {
-            get {
-                if(s_defaultIcon != null) return s_defaultIcon;
-                var path = AssetDatabase.GUIDToAssetPath(DefaultIconGuid);
-                if(string.IsNullOrEmpty(path)) return null;
-                s_defaultIcon = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
-                return s_defaultIcon;
-            }
-        }
         private static void DrawIcon(Rect selectionRect,GameObject gameObject) {
             if(gameObject.TryGetComponent<MornHierarchy>(out var hi) == false) return;
-            var icon = hi.Icon != null ? hi.Icon : DefaultIcon;
-            if(icon == null) return;
+            if(hi.Icon == null) return;
+            var icon = hi.Icon;
             var rect = new Rect(
                 IconColumnX + (IconColumnWidth - IconSize) * 0.5f,
                 selectionRect.y + (selectionRect.height - IconSize) * 0.5f,
