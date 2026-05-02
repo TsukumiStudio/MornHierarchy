@@ -133,7 +133,7 @@ namespace MornHierarchy {
             }
             var style = new GUIStyle(EditorStyles.label);
             style.alignment = centered ? TextAnchor.MiddleCenter : TextAnchor.MiddleLeft;
-            style.normal.textColor = gameObject.activeInHierarchy ? EditorStyles.label.normal.textColor : Color.gray;
+            style.normal.textColor = gameObject.activeInHierarchy ? Color.white : Color.gray;
             EditorGUI.LabelField(rect,gameObject.name,style);
         }
     }
