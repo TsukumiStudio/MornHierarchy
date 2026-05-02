@@ -8,6 +8,7 @@ namespace MornHierarchy {
         }
         private const float IconColumnX = 32f;
         private const float IconColumnWidth = 16f;
+        private const float IconSize = 12f;
         private static void HierarchyWindowItemOnGUI(int instanceID,Rect selectionRect) {
             var gameObject = EditorUtility.InstanceIDToObject(instanceID) as GameObject;
             if(gameObject == null) return;
@@ -44,7 +45,11 @@ namespace MornHierarchy {
             if(gameObject.TryGetComponent<MornHierarchy>(out var hi) == false) return;
             var icon = hi.Icon != null ? hi.Icon : DefaultIcon;
             if(icon == null) return;
-            var rect = new Rect(IconColumnX,selectionRect.y,IconColumnWidth,selectionRect.height);
+            var rect = new Rect(
+                IconColumnX + (IconColumnWidth - IconSize) * 0.5f,
+                selectionRect.y + (selectionRect.height - IconSize) * 0.5f,
+                IconSize,
+                IconSize);
             GUI.DrawTexture(rect,icon,ScaleMode.ScaleToFit);
         }
         private static void EraseNativeText(int instanceID,Rect selectionRect) {
