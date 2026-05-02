@@ -24,9 +24,28 @@ namespace MornHierarchy {
             }
             DrawLabel(selectionRect,gameObject,isCenter);
             DrawIcon(selectionRect,gameObject);
-            DrawSortingOrder(selectionRect,gameObject);
+            var rightX = DrawComponentIcons(selectionRect,gameObject);
+            DrawSortingOrder(selectionRect,gameObject,rightX);
         }
-        private static void DrawSortingOrder(Rect selectionRect,GameObject gameObject) {
+        private static float DrawComponentIcons(Rect selectionRect,GameObject gameObject) {
+            const float iconSize = 14f;
+            const float spacing = 1f;
+            var components = gameObject.GetComponents<Component>();
+            var x = selectionRect.xMax - 4f;
+            var y = selectionRect.y + (selectionRect.height - iconSize) * 0.5f;
+            foreach(var c in components) {
+                if(c == null) continue;
+                if(c is Transform) continue;
+                if(c is MornHierarchy) continue;
+                var icon = EditorGUIUtility.ObjectContent(c,c.GetType()).image;
+                if(icon == null) continue;
+                x -= iconSize;
+                GUI.DrawTexture(new Rect(x,y,iconSize,iconSize),icon,ScaleMode.ScaleToFit);
+                x -= spacing;
+            }
+            return x;
+        }
+        private static void DrawSortingOrder(Rect selectionRect,GameObject gameObject,float rightX) {
             var renderer = gameObject.GetComponent<Renderer>();
             if(renderer == null) return;
             var sortingGroup = gameObject.GetComponentInParent<SortingGroup>(true);
@@ -35,7 +54,7 @@ namespace MornHierarchy {
             var groupText = sortingGroup != null ? $"{LayerNameToNumber(sortingGroup.sortingLayerName)}.{sortingGroup.sortingOrder}" : "";
             var text = groupText.Length > 0 ? $"{groupText} (+{rendererText})" : rendererText;
             var rect = selectionRect;
-            rect.xMax -= 16;
+            rect.xMax = rightX - 4;
             rect.xMin = rect.xMax - 80;
             var style = new GUIStyle(EditorStyles.label);
             style.alignment = TextAnchor.MiddleRight;
