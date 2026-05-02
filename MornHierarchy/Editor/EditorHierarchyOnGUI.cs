@@ -44,20 +44,31 @@ namespace MornHierarchy {
         }
         private static void DrawGradient(Rect rect,Color baseColor,float fade) {
             const float solidWidth = 32f;
-            const int steps = 48;
             var solid = baseColor;
             solid.a = fade;
             EditorGUI.DrawRect(new Rect(rect.x,rect.y,solidWidth,rect.height),solid);
             var gradStart = rect.x + solidWidth;
             var gradWidth = rect.xMax - gradStart;
             if(gradWidth <= 0) return;
-            var stepW = gradWidth / steps;
-            for(var i = 0;i < steps;i++) {
-                var t = (i + 1) / (float)steps;
-                var c = baseColor;
-                c.a = (1f - t) * fade;
-                EditorGUI.DrawRect(new Rect(gradStart + i * stepW,rect.y,stepW + 1,rect.height),c);
-            }
+            var prevColor = GUI.color;
+            GUI.color = new Color(baseColor.r,baseColor.g,baseColor.b,fade);
+            GUI.DrawTexture(new Rect(gradStart,rect.y,gradWidth,rect.height),GetGradientTex(),ScaleMode.StretchToFill,true);
+            GUI.color = prevColor;
+        }
+        private static Texture2D s_gradientTex;
+        private static Texture2D GetGradientTex() {
+            if(s_gradientTex != null) return s_gradientTex;
+            const int w = 128;
+            s_gradientTex = new Texture2D(w,1,TextureFormat.RGBA32,false) {
+                wrapMode = TextureWrapMode.Clamp,
+                filterMode = FilterMode.Bilinear,
+                hideFlags = HideFlags.HideAndDontSave,
+            };
+            var pixels = new Color[w];
+            for(var i = 0;i < w;i++) pixels[i] = new Color(1f,1f,1f,i / (float)(w - 1));
+            s_gradientTex.SetPixels(pixels);
+            s_gradientTex.Apply();
+            return s_gradientTex;
         }
         private static void DrawIcon(Rect selectionRect,GameObject gameObject) {
             if(gameObject.TryGetComponent<MornHierarchy>(out var hi) == false) return;
