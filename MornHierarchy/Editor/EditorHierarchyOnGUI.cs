@@ -31,44 +31,18 @@ namespace MornHierarchy {
             var fullRect = selectionRect;
             fullRect.xMin = 0;
             fullRect.xMax = Mathf.Max(selectionRect.xMax,EditorGUIUtility.currentViewWidth);
-            var hasDrawn = false;
             if(gameObject.TryGetComponent<MornHierarchy>(out var ownColor)) {
                 DrawTransparentRect(fullRect,ownColor.BackColor);
-                hasDrawn = true;
+                return;
             }
             var mornHiArray = gameObject.GetComponentsInParent<MornHierarchy>(true);
             if(mornHiArray == null) return;
-            var target = gameObject.transform;
-            var depth = 0;
-            for(var hiIndex = 0;hiIndex < mornHiArray.Length;) {
-                var hi = mornHiArray[hiIndex];
-                if(target == hi.transform) {
-                    hiIndex++;
-                    continue;
-                }
-                if(hi.ApplyChildren == false) {
-                    hiIndex++;
-                    target = target.parent;
-                    depth++;
-                    hasDrawn = true;
-                    continue;
-                }
-
-                //Side
-                var kBack = GetKRecursion(hi.transform,target.parent);
-                var rectA = selectionRect;
-                rectA.xMax = rectA.xMin - 14 * (depth);
-                rectA.xMin = rectA.xMax - 14;
-                DrawTransparentRect(rectA,hi.BackColor * kBack);
-
-                //Main
-                if(hasDrawn == false) {
-                    var kFront = GetKRecursion(hi.transform,gameObject.transform);
-                    DrawTransparentRect(fullRect,hi.BackColor * kFront);
-                    hasDrawn = true;
-                }
-                target = target.parent;
-                depth++;
+            foreach(var hi in mornHiArray) {
+                if(hi.transform == gameObject.transform) continue;
+                if(hi.ApplyChildren == false) return;
+                var kFront = GetKRecursion(hi.transform,gameObject.transform);
+                DrawTransparentRect(fullRect,hi.BackColor * kFront);
+                return;
             }
         }
         private static void DrawTransparentRect(Rect rect,Color color) {
