@@ -1,4 +1,5 @@
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.Rendering;
 namespace MornHierarchy {
@@ -13,6 +14,16 @@ namespace MornHierarchy {
         private static void HierarchyWindowItemOnGUI(int instanceID,Rect selectionRect) {
             var gameObject = EditorUtility.InstanceIDToObject(instanceID) as GameObject;
             if(gameObject == null) return;
+            // Prefab Edit Mode の "Prefab Mode in Context" 等、 prefabContentsRoot より上のヘッダ行は MornHierarchy の介入対象外。
+            // Unity 標準描画 (灰色) をそのまま見せる。
+            var prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
+            if(prefabStage != null) {
+                var rootTr = prefabStage.prefabContentsRoot.transform;
+                if(gameObject != prefabStage.prefabContentsRoot
+                   && !gameObject.transform.IsChildOf(rootTr)) {
+                    return;
+                }
+            }
             var isCenter = gameObject.TryGetComponent<MornHierarchy>(out var hi) && hi.IsCenter;
             ResolveColor(gameObject,out var effectiveColor,out var fade);
             EraseNativeText(instanceID,selectionRect);
@@ -37,6 +48,8 @@ namespace MornHierarchy {
                 if(c == null) continue;
                 if(c is Transform) continue;
                 if(c is MornHierarchy) continue;
+                // Inspector 非表示扱いの Component は描画しない (HideInInspector / HideAndDontSave 等)
+                if((c.hideFlags & HideFlags.HideInInspector) != 0) continue;
                 var icon = EditorGUIUtility.ObjectContent(c,c.GetType()).image;
                 if(icon == null) continue;
                 x -= iconSize;
@@ -183,8 +196,10 @@ namespace MornHierarchy {
         }
         private static Color ResolveLabelColor(GameObject gameObject) {
             if(gameObject.activeInHierarchy == false) return Color.gray;
+            // Scene 上に置かれた Prefab Instance のみ青で描画 (Unity 本来の挙動)。
+            // Prefab Edit Mode 配下は Unity 標準でも白扱いなので白のまま、
+            // 「Prefab Mode in Context」ヘッダは GameObject でないため MornHierarchy のフックを通らず Unity 標準 (灰色) のまま表示される。
             if(PrefabUtility.IsPartOfPrefabInstance(gameObject)) {
-                // Unity 本来のプレハブ青を再現
                 return new Color(0.40f,0.70f,1.00f);
             }
             return Color.white;
