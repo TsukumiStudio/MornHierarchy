@@ -21,10 +21,10 @@ namespace MornHierarchy {
     }
     public class MornHierarchy : MonoBehaviour {
 #if UNITY_EDITOR
+        public bool IsLine;
+        public Texture2D Icon;
         public MornHierarchyColor BackColor;
         public bool ApplyChildren;
-        public Texture2D Icon;
-        public bool IsLine;
         private void OnValidate() {
             UnityEditor.EditorApplication.RepaintHierarchyWindow();
         }
