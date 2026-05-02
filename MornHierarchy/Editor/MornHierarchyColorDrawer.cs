@@ -22,13 +22,26 @@ namespace MornHierarchy {
                 var row = i / Cols;
                 var rect = new Rect(gridX + col * (ButtonSize + Spacing),gridY + row * (ButtonSize + Spacing),ButtonSize,ButtonSize);
                 var c = (MornHierarchyColor)values.GetValue(i);
-                EditorGUI.DrawRect(rect,EditorHierarchyOnGUI.ToColor(c));
+                if(c == MornHierarchyColor.None) {
+                    DrawNoneSwatch(rect);
+                } else {
+                    EditorGUI.DrawRect(rect,EditorHierarchyOnGUI.ToColor(c));
+                }
                 if(property.enumValueIndex == i) DrawOutline(rect,Color.white,2);
                 if(Event.current.type == EventType.MouseDown && rect.Contains(Event.current.mousePosition)) {
                     property.enumValueIndex = i;
                     Event.current.Use();
                     GUI.changed = true;
                 }
+            }
+        }
+        private static void DrawNoneSwatch(Rect rect) {
+            EditorGUI.DrawRect(rect,new Color(0.2f,0.2f,0.2f));
+            var red = new Color(1f,0.3f,0.3f);
+            var n = Mathf.RoundToInt(rect.width);
+            for(var t = 0;t < n;t++) {
+                EditorGUI.DrawRect(new Rect(rect.x + t,rect.yMax - t - 1,2,1),red);
+                EditorGUI.DrawRect(new Rect(rect.x + t,rect.y + t,2,1),red);
             }
         }
         private static void DrawOutline(Rect rect,Color color,float thickness) {

@@ -59,7 +59,7 @@ namespace MornHierarchy {
             var fullRect = selectionRect;
             fullRect.xMin = 0;
             fullRect.xMax = Mathf.Max(selectionRect.xMax,EditorGUIUtility.currentViewWidth);
-            if(gameObject.TryGetComponent<MornHierarchy>(out var ownColor) && ownColor.EnableColor) {
+            if(gameObject.TryGetComponent<MornHierarchy>(out var ownColor) && ownColor.BackColor != MornHierarchyColor.None) {
                 DrawTransparentRect(fullRect,ToColor(ownColor.BackColor));
                 return;
             }
@@ -67,7 +67,7 @@ namespace MornHierarchy {
             if(mornHiArray == null) return;
             foreach(var hi in mornHiArray) {
                 if(hi.transform == gameObject.transform) continue;
-                if(hi.EnableColor == false) continue;
+                if(hi.BackColor == MornHierarchyColor.None) continue;
                 if(hi.ApplyChildren == false) return;
                 var kFront = GetKRecursion(hi.transform,gameObject.transform);
                 DrawTransparentRect(fullRect,ToColor(hi.BackColor) * kFront);
@@ -96,6 +96,7 @@ namespace MornHierarchy {
                 case MornHierarchyColor.Gray:    return new Color(0.65f,0.65f,0.65f);
                 case MornHierarchyColor.White:   return new Color(0.95f,0.95f,0.95f);
                 case MornHierarchyColor.Black:   return new Color(0.15f,0.15f,0.15f);
+                case MornHierarchyColor.None:    return Color.clear;
             }
             return Color.clear;
         }

@@ -17,10 +17,10 @@ namespace MornHierarchy {
         Gray,
         White,
         Black,
+        None,
     }
     public class MornHierarchy : MonoBehaviour {
 #if UNITY_EDITOR
-        public bool EnableColor = true;
         public MornHierarchyColor BackColor;
         public bool ApplyChildren;
         public Texture2D Icon;
