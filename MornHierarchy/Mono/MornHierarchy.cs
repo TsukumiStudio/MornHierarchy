@@ -24,7 +24,6 @@ namespace MornHierarchy {
         public bool IsLine;
         public Texture2D Icon;
         public MornHierarchyColor BackColor;
-        public bool ColorAsText;
         public bool ApplyChildren;
         private void OnValidate() {
             UnityEditor.EditorApplication.RepaintHierarchyWindow();

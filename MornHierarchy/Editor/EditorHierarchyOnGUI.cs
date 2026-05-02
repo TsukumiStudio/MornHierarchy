@@ -13,24 +13,22 @@ namespace MornHierarchy {
             var gameObject = EditorUtility.InstanceIDToObject(instanceID) as GameObject;
             if(gameObject == null) return;
             var isLine = gameObject.TryGetComponent<MornHierarchy>(out var hi) && hi.IsLine;
-            ResolveColor(gameObject,out var effectiveColor,out var asText,out var fade);
+            ResolveColor(gameObject,out var effectiveColor,out var fade);
             EraseNativeText(instanceID,selectionRect);
-            if(effectiveColor != MornHierarchyColor.None && asText == false) {
+            if(effectiveColor != MornHierarchyColor.None) {
                 var fullRect = selectionRect;
                 fullRect.xMin = 0;
                 fullRect.xMax = Mathf.Max(selectionRect.xMax,EditorGUIUtility.currentViewWidth);
-                DrawTransparentRect(fullRect,ToColor(effectiveColor) * fade);
+                DrawGradient(fullRect,ToColor(effectiveColor),fade);
             }
-            DrawLabel(selectionRect,gameObject,isLine,asText ? ToColor(effectiveColor) * fade : (Color?)null);
+            DrawLabel(selectionRect,gameObject,isLine);
             DrawIcon(selectionRect,gameObject);
         }
-        private static void ResolveColor(GameObject gameObject,out MornHierarchyColor color,out bool asText,out float fade) {
+        private static void ResolveColor(GameObject gameObject,out MornHierarchyColor color,out float fade) {
             color = MornHierarchyColor.None;
-            asText = false;
             fade = 1f;
             if(gameObject.TryGetComponent<MornHierarchy>(out var own) && own.BackColor != MornHierarchyColor.None) {
                 color = own.BackColor;
-                asText = own.ColorAsText;
                 return;
             }
             var ancestors = gameObject.GetComponentsInParent<MornHierarchy>(true);
@@ -40,9 +38,25 @@ namespace MornHierarchy {
                 if(hi.BackColor == MornHierarchyColor.None) continue;
                 if(hi.ApplyChildren == false) return;
                 color = hi.BackColor;
-                asText = hi.ColorAsText;
                 fade = GetKRecursion(hi.transform,gameObject.transform);
                 return;
+            }
+        }
+        private static void DrawGradient(Rect rect,Color baseColor,float fade) {
+            const float solidWidth = 32f;
+            const int steps = 48;
+            var solid = baseColor;
+            solid.a = fade;
+            EditorGUI.DrawRect(new Rect(rect.x,rect.y,solidWidth,rect.height),solid);
+            var gradStart = rect.x + solidWidth;
+            var gradWidth = rect.xMax - gradStart;
+            if(gradWidth <= 0) return;
+            var stepW = gradWidth / steps;
+            for(var i = 0;i < steps;i++) {
+                var t = (i + 1) / (float)steps;
+                var c = baseColor;
+                c.a = (1f - t) * fade;
+                EditorGUI.DrawRect(new Rect(gradStart + i * stepW,rect.y,stepW + 1,rect.height),c);
             }
         }
         private static void DrawIcon(Rect selectionRect,GameObject gameObject) {
@@ -69,10 +83,6 @@ namespace MornHierarchy {
             }
             if(rect.Contains(Event.current.mousePosition)) return new Color32(68,68,68,255);
             return new Color32(56,56,56,255);
-        }
-        private static void DrawTransparentRect(Rect rect,Color color) {
-            color.a = 0.55f;
-            EditorGUI.DrawRect(rect,color);
         }
         public static Color ToColor(MornHierarchyColor c) {
             switch(c) {
@@ -102,7 +112,7 @@ namespace MornHierarchy {
             var pare = own.parent;
             return Mathf.InverseLerp(pare.childCount + offset,-1,own.GetSiblingIndex()) * GetKRecursion(aim,pare);
         }
-        private static void DrawLabel(Rect selectionRect,GameObject gameObject,bool centered,Color? textColor) {
+        private static void DrawLabel(Rect selectionRect,GameObject gameObject,bool centered) {
             var rect = selectionRect;
             if(centered) {
                 rect.xMin = Mathf.Max(rect.xMin,32);
@@ -112,15 +122,7 @@ namespace MornHierarchy {
             }
             var style = new GUIStyle(EditorStyles.label);
             style.alignment = centered ? TextAnchor.MiddleCenter : TextAnchor.MiddleLeft;
-            Color baseColor;
-            if(textColor.HasValue) {
-                var c = textColor.Value;
-                c.a = 1f;
-                baseColor = c;
-            } else {
-                baseColor = EditorStyles.label.normal.textColor;
-            }
-            style.normal.textColor = gameObject.activeInHierarchy ? baseColor : Color.gray;
+            style.normal.textColor = gameObject.activeInHierarchy ? EditorStyles.label.normal.textColor : Color.gray;
             EditorGUI.LabelField(rect,gameObject.name,style);
         }
     }
