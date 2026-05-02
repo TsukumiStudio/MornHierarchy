@@ -21,7 +21,6 @@ namespace MornHierarchy {
                 fullRect.xMax = Mathf.Max(selectionRect.xMax,EditorGUIUtility.currentViewWidth);
                 DrawTransparentRect(fullRect,ToColor(effectiveColor) * fade);
             }
-            if(isLine) DrawLineDecoration(selectionRect);
             DrawLabel(selectionRect,gameObject,isLine,asText ? ToColor(effectiveColor) * fade : (Color?)null);
             DrawIcon(selectionRect,gameObject);
         }
@@ -45,17 +44,6 @@ namespace MornHierarchy {
                 fade = GetKRecursion(hi.transform,gameObject.transform);
                 return;
             }
-        }
-        private static void DrawLineDecoration(Rect selectionRect) {
-            var lineRect = selectionRect;
-            lineRect.xMin = 0;
-            lineRect.xMax = Mathf.Max(lineRect.xMax,EditorGUIUtility.currentViewWidth);
-            var upper = lineRect;
-            upper.yMax = upper.yMin + 2;
-            EditorGUI.DrawRect(upper,Color.black);
-            var lower = lineRect;
-            lower.yMin = lower.yMax - 2;
-            EditorGUI.DrawRect(lower,Color.black);
         }
         private static void DrawIcon(Rect selectionRect,GameObject gameObject) {
             if(gameObject.TryGetComponent<MornHierarchy>(out var hi) == false) return;
