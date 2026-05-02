@@ -178,8 +178,16 @@ namespace MornHierarchy {
             }
             var style = new GUIStyle(EditorStyles.label);
             style.alignment = centered ? TextAnchor.MiddleCenter : TextAnchor.MiddleLeft;
-            style.normal.textColor = gameObject.activeInHierarchy ? Color.white : Color.gray;
+            style.normal.textColor = ResolveLabelColor(gameObject);
             EditorGUI.LabelField(rect,gameObject.name,style);
+        }
+        private static Color ResolveLabelColor(GameObject gameObject) {
+            if(gameObject.activeInHierarchy == false) return Color.gray;
+            if(PrefabUtility.IsPartOfPrefabInstance(gameObject)) {
+                // Unity 本来のプレハブ青を再現
+                return new Color(0.40f,0.70f,1.00f);
+            }
+            return Color.white;
         }
     }
 }
