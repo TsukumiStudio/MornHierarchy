@@ -11,10 +11,31 @@ namespace MornHierarchy {
         private static void HierarchyWindowItemOnGUI(int instanceID,Rect selectionRect) {
             var gameObject = EditorUtility.InstanceIDToObject(instanceID) as GameObject;
             if(gameObject == null) return;
+            if(gameObject.TryGetComponent<MornHierarchy>(out var hi) && hi.IsLine) {
+                DrawLine(instanceID,selectionRect,gameObject);
+                return;
+            }
             EraseNativeText(instanceID,selectionRect);
             DrawColor(selectionRect,gameObject);
             DrawLabel(selectionRect,gameObject);
             DrawIcon(selectionRect,gameObject);
+        }
+        private static void DrawLine(int instanceID,Rect selectionRect,GameObject gameObject) {
+            var fullRect = selectionRect;
+            fullRect.xMin = 0;
+            fullRect.xMax = Mathf.Max(selectionRect.xMax,EditorGUIUtility.currentViewWidth);
+            EditorGUI.DrawRect(fullRect,GetRowBackgroundColor(instanceID,fullRect));
+            var lineRect = fullRect;
+            lineRect.xMin = 32;
+            var upper = lineRect;
+            upper.yMax = upper.yMin + 2;
+            EditorGUI.DrawRect(upper,Color.black);
+            var lower = lineRect;
+            lower.yMin = lower.yMax - 2;
+            EditorGUI.DrawRect(lower,Color.black);
+            var style = new GUIStyle(EditorStyles.label);
+            style.alignment = TextAnchor.MiddleCenter;
+            EditorGUI.LabelField(lineRect,gameObject.name,style);
         }
         private static void DrawIcon(Rect selectionRect,GameObject gameObject) {
             if(gameObject.TryGetComponent<MornHierarchy>(out var hi) == false) return;
