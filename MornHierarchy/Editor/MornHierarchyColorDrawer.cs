@@ -3,36 +3,34 @@ using UnityEngine;
 namespace MornHierarchy {
     [CustomPropertyDrawer(typeof(MornHierarchyColor))]
     public class MornHierarchyColorDrawer : PropertyDrawer {
-        private const int Cols = 8;
-        private const float ButtonSize = 22f;
+        private const float ButtonSize = 18f;
         private const float Spacing = 2f;
         public override float GetPropertyHeight(SerializedProperty property,GUIContent label) {
-            var count = System.Enum.GetValues(typeof(MornHierarchyColor)).Length;
-            var rows = Mathf.CeilToInt(count / (float)Cols);
-            return EditorGUIUtility.singleLineHeight + rows * (ButtonSize + Spacing) + 2;
+            return Mathf.Max(EditorGUIUtility.singleLineHeight,ButtonSize);
         }
         public override void OnGUI(Rect position,SerializedProperty property,GUIContent label) {
-            var labelRect = new Rect(position.x,position.y,position.width,EditorGUIUtility.singleLineHeight);
+            var labelRect = new Rect(position.x,position.y,EditorGUIUtility.labelWidth,EditorGUIUtility.singleLineHeight);
             EditorGUI.LabelField(labelRect,label);
-            var values = System.Enum.GetValues(typeof(MornHierarchyColor));
             var gridX = position.x + EditorGUIUtility.labelWidth;
-            var gridY = position.y + EditorGUIUtility.singleLineHeight + 2;
-            for(var i = 0;i < values.Length;i++) {
-                var col = i % Cols;
-                var row = i / Cols;
-                var rect = new Rect(gridX + col * (ButtonSize + Spacing),gridY + row * (ButtonSize + Spacing),ButtonSize,ButtonSize);
-                var c = (MornHierarchyColor)values.GetValue(i);
-                if(c == MornHierarchyColor.None) {
-                    DrawNoneSwatch(rect);
-                } else {
-                    EditorGUI.DrawRect(rect,EditorHierarchyOnGUI.ToColor(c));
-                }
-                if(property.enumValueIndex == i) DrawOutline(rect,Color.white,2);
-                if(Event.current.type == EventType.MouseDown && rect.Contains(Event.current.mousePosition)) {
-                    property.enumValueIndex = i;
-                    Event.current.Use();
-                    GUI.changed = true;
-                }
+            var gridY = position.y + (position.height - ButtonSize) * 0.5f;
+            DrawSwatch(new Rect(gridX,gridY,ButtonSize,ButtonSize),MornHierarchyColor.None,property);
+            var displayIdx = 1;
+            var values = System.Enum.GetValues(typeof(MornHierarchyColor));
+            foreach(MornHierarchyColor c in values) {
+                if(c == MornHierarchyColor.None) continue;
+                var rect = new Rect(gridX + displayIdx * (ButtonSize + Spacing),gridY,ButtonSize,ButtonSize);
+                DrawSwatch(rect,c,property);
+                displayIdx++;
+            }
+        }
+        private static void DrawSwatch(Rect rect,MornHierarchyColor c,SerializedProperty property) {
+            if(c == MornHierarchyColor.None) DrawNoneSwatch(rect);
+            else EditorGUI.DrawRect(rect,EditorHierarchyOnGUI.ToColor(c));
+            if((MornHierarchyColor)property.enumValueIndex == c) DrawOutline(rect,Color.white,2);
+            if(Event.current.type == EventType.MouseDown && rect.Contains(Event.current.mousePosition)) {
+                property.enumValueIndex = (int)c;
+                Event.current.Use();
+                GUI.changed = true;
             }
         }
         private static void DrawNoneSwatch(Rect rect) {

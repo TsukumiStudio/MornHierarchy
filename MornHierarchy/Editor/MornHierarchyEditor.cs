@@ -4,8 +4,7 @@ namespace MornHierarchy {
     [CustomEditor(typeof(MornHierarchy))]
     [CanEditMultipleObjects]
     public class MornHierarchyEditor : Editor {
-        private const int Cols = 8;
-        private const float ButtonSize = 32f;
+        private const float ButtonSize = 24f;
         private const float Spacing = 2f;
         public override void OnInspectorGUI() {
             serializedObject.Update();
@@ -18,18 +17,17 @@ namespace MornHierarchy {
         private static void DrawIconGrid(SerializedProperty property) {
             var icons = MornHierarchyIconPalette.Icons;
             var total = icons.Length + 1;
-            var rows = Mathf.CeilToInt(total / (float)Cols);
-            EditorGUILayout.LabelField(property.displayName);
-            var area = GUILayoutUtility.GetRect(ButtonSize * Cols + Spacing * (Cols - 1),rows * (ButtonSize + Spacing));
+            var rect = EditorGUILayout.GetControlRect(true,ButtonSize);
+            var labelRect = new Rect(rect.x,rect.y + (rect.height - EditorGUIUtility.singleLineHeight) * 0.5f,EditorGUIUtility.labelWidth,EditorGUIUtility.singleLineHeight);
+            EditorGUI.LabelField(labelRect,property.displayName);
+            var gridX = rect.x + EditorGUIUtility.labelWidth;
             for(var i = 0;i < total;i++) {
-                var col = i % Cols;
-                var row = i / Cols;
-                var rect = new Rect(area.x + col * (ButtonSize + Spacing),area.y + row * (ButtonSize + Spacing),ButtonSize,ButtonSize);
+                var br = new Rect(gridX + i * (ButtonSize + Spacing),rect.y,ButtonSize,ButtonSize);
                 Texture2D tex = i == 0 ? null : icons[i - 1];
-                if(tex == null) DrawNoneSwatch(rect);
-                else GUI.DrawTexture(rect,tex,ScaleMode.ScaleToFit);
-                if(property.objectReferenceValue == tex) DrawOutline(rect,Color.white,2);
-                if(Event.current.type == EventType.MouseDown && rect.Contains(Event.current.mousePosition)) {
+                if(tex == null) DrawNoneSwatch(br);
+                else GUI.DrawTexture(br,tex,ScaleMode.ScaleToFit);
+                if(property.objectReferenceValue == tex) DrawOutline(br,Color.white,2);
+                if(Event.current.type == EventType.MouseDown && br.Contains(Event.current.mousePosition)) {
                     property.objectReferenceValue = tex;
                     Event.current.Use();
                     GUI.changed = true;
