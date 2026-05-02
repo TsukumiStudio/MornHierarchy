@@ -11,6 +11,7 @@ namespace MornHierarchy {
             EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(MornHierarchy.IsLine)));
             DrawIconGrid(serializedObject.FindProperty(nameof(MornHierarchy.Icon)));
             EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(MornHierarchy.BackColor)));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(MornHierarchy.ColorAsText)));
             EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(MornHierarchy.ApplyChildren)));
             serializedObject.ApplyModifiedProperties();
         }
