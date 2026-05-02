@@ -5,23 +5,31 @@ namespace MornHierarchy {
     public class MornHierarchyColorDrawer : PropertyDrawer {
         private const float ButtonSize = 18f;
         private const float Spacing = 2f;
+        private const int Total = 17;
         public override float GetPropertyHeight(SerializedProperty property,GUIContent label) {
-            return Mathf.Max(EditorGUIUtility.singleLineHeight,ButtonSize);
+            var avail = EditorGUIUtility.currentViewWidth - EditorGUIUtility.labelWidth - 20f;
+            var cols = Mathf.Max(1,Mathf.FloorToInt((avail + Spacing) / (ButtonSize + Spacing)));
+            var rows = Mathf.CeilToInt(Total / (float)cols);
+            return rows * ButtonSize + (rows - 1) * Spacing;
         }
         public override void OnGUI(Rect position,SerializedProperty property,GUIContent label) {
             var labelRect = new Rect(position.x,position.y,EditorGUIUtility.labelWidth,EditorGUIUtility.singleLineHeight);
             EditorGUI.LabelField(labelRect,label);
             var gridX = position.x + EditorGUIUtility.labelWidth;
-            var gridY = position.y + (position.height - ButtonSize) * 0.5f;
-            DrawSwatch(new Rect(gridX,gridY,ButtonSize,ButtonSize),MornHierarchyColor.None,property);
-            var displayIdx = 1;
-            var values = System.Enum.GetValues(typeof(MornHierarchyColor));
-            foreach(MornHierarchyColor c in values) {
+            var gridWidth = position.xMax - gridX;
+            var cols = Mathf.Max(1,Mathf.FloorToInt((gridWidth + Spacing) / (ButtonSize + Spacing)));
+            var displayIdx = 0;
+            DrawAt(displayIdx++,gridX,position.y,cols,MornHierarchyColor.None,property);
+            foreach(MornHierarchyColor c in System.Enum.GetValues(typeof(MornHierarchyColor))) {
                 if(c == MornHierarchyColor.None) continue;
-                var rect = new Rect(gridX + displayIdx * (ButtonSize + Spacing),gridY,ButtonSize,ButtonSize);
-                DrawSwatch(rect,c,property);
-                displayIdx++;
+                DrawAt(displayIdx++,gridX,position.y,cols,c,property);
             }
+        }
+        private static void DrawAt(int index,float gridX,float gridY,int cols,MornHierarchyColor c,SerializedProperty property) {
+            var col = index % cols;
+            var row = index / cols;
+            var rect = new Rect(gridX + col * (ButtonSize + Spacing),gridY + row * (ButtonSize + Spacing),ButtonSize,ButtonSize);
+            DrawSwatch(rect,c,property);
         }
         private static void DrawSwatch(Rect rect,MornHierarchyColor c,SerializedProperty property) {
             if(c == MornHierarchyColor.None) DrawNoneSwatch(rect);

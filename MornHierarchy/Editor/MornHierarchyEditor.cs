@@ -17,12 +17,20 @@ namespace MornHierarchy {
         private static void DrawIconGrid(SerializedProperty property) {
             var icons = MornHierarchyIconPalette.Icons;
             var total = icons.Length + 1;
-            var rect = EditorGUILayout.GetControlRect(true,ButtonSize);
-            var labelRect = new Rect(rect.x,rect.y + (rect.height - EditorGUIUtility.singleLineHeight) * 0.5f,EditorGUIUtility.labelWidth,EditorGUIUtility.singleLineHeight);
+            var avail = EditorGUIUtility.currentViewWidth - EditorGUIUtility.labelWidth - 20f;
+            var cols = Mathf.Max(1,Mathf.FloorToInt((avail + Spacing) / (ButtonSize + Spacing)));
+            var rows = Mathf.CeilToInt(total / (float)cols);
+            var height = rows * ButtonSize + (rows - 1) * Spacing;
+            var rect = EditorGUILayout.GetControlRect(true,height);
+            var labelRect = new Rect(rect.x,rect.y,EditorGUIUtility.labelWidth,EditorGUIUtility.singleLineHeight);
             EditorGUI.LabelField(labelRect,property.displayName);
             var gridX = rect.x + EditorGUIUtility.labelWidth;
+            var gridWidth = rect.xMax - gridX;
+            cols = Mathf.Max(1,Mathf.FloorToInt((gridWidth + Spacing) / (ButtonSize + Spacing)));
             for(var i = 0;i < total;i++) {
-                var br = new Rect(gridX + i * (ButtonSize + Spacing),rect.y,ButtonSize,ButtonSize);
+                var col = i % cols;
+                var row = i / cols;
+                var br = new Rect(gridX + col * (ButtonSize + Spacing),rect.y + row * (ButtonSize + Spacing),ButtonSize,ButtonSize);
                 Texture2D tex = i == 0 ? null : icons[i - 1];
                 if(tex == null) DrawNoneSwatch(br);
                 else GUI.DrawTexture(br,tex,ScaleMode.ScaleToFit);
