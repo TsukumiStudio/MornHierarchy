@@ -75,27 +75,27 @@ namespace MornHierarchy {
             }
         }
         private static void DrawTransparentRect(Rect rect,Color color) {
-            color.a = 0.3f;
+            color.a = 0.55f;
             EditorGUI.DrawRect(rect,color);
         }
         public static Color ToColor(MornHierarchyColor c) {
             switch(c) {
-                case MornHierarchyColor.Red:     return new Color(0.95f,0.30f,0.30f);
-                case MornHierarchyColor.Orange:  return new Color(1.00f,0.55f,0.20f);
-                case MornHierarchyColor.Yellow:  return new Color(1.00f,0.85f,0.20f);
-                case MornHierarchyColor.Lime:    return new Color(0.65f,0.95f,0.30f);
-                case MornHierarchyColor.Green:   return new Color(0.30f,0.80f,0.40f);
-                case MornHierarchyColor.Mint:    return new Color(0.40f,0.85f,0.70f);
-                case MornHierarchyColor.Cyan:    return new Color(0.30f,0.85f,0.95f);
-                case MornHierarchyColor.Blue:    return new Color(0.30f,0.55f,1.00f);
-                case MornHierarchyColor.Indigo:  return new Color(0.45f,0.40f,0.85f);
-                case MornHierarchyColor.Purple:  return new Color(0.65f,0.40f,0.85f);
-                case MornHierarchyColor.Magenta: return new Color(0.90f,0.40f,0.90f);
-                case MornHierarchyColor.Pink:    return new Color(1.00f,0.55f,0.75f);
-                case MornHierarchyColor.Brown:   return new Color(0.65f,0.45f,0.30f);
-                case MornHierarchyColor.Gray:    return new Color(0.65f,0.65f,0.65f);
-                case MornHierarchyColor.White:   return new Color(0.95f,0.95f,0.95f);
-                case MornHierarchyColor.Black:   return new Color(0.15f,0.15f,0.15f);
+                case MornHierarchyColor.Red:     return new Color(1.00f,0.15f,0.15f);
+                case MornHierarchyColor.Orange:  return new Color(1.00f,0.50f,0.05f);
+                case MornHierarchyColor.Yellow:  return new Color(1.00f,0.90f,0.05f);
+                case MornHierarchyColor.Lime:    return new Color(0.60f,1.00f,0.15f);
+                case MornHierarchyColor.Green:   return new Color(0.10f,0.85f,0.25f);
+                case MornHierarchyColor.Mint:    return new Color(0.20f,0.95f,0.70f);
+                case MornHierarchyColor.Cyan:    return new Color(0.10f,0.85f,1.00f);
+                case MornHierarchyColor.Blue:    return new Color(0.15f,0.45f,1.00f);
+                case MornHierarchyColor.Indigo:  return new Color(0.35f,0.30f,0.95f);
+                case MornHierarchyColor.Purple:  return new Color(0.70f,0.25f,0.95f);
+                case MornHierarchyColor.Magenta: return new Color(1.00f,0.20f,1.00f);
+                case MornHierarchyColor.Pink:    return new Color(1.00f,0.45f,0.75f);
+                case MornHierarchyColor.Brown:   return new Color(0.75f,0.40f,0.15f);
+                case MornHierarchyColor.Gray:    return new Color(0.70f,0.70f,0.70f);
+                case MornHierarchyColor.White:   return new Color(1.00f,1.00f,1.00f);
+                case MornHierarchyColor.Black:   return new Color(0.05f,0.05f,0.05f);
                 case MornHierarchyColor.None:    return Color.clear;
             }
             return Color.clear;
