@@ -1,5 +1,6 @@
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering;
 namespace MornHierarchy {
     public static class EditorHierarchyOnGUI {
         [InitializeOnLoadMethod]
@@ -23,6 +24,32 @@ namespace MornHierarchy {
             }
             DrawLabel(selectionRect,gameObject,isCenter);
             DrawIcon(selectionRect,gameObject);
+            DrawSortingOrder(selectionRect,gameObject);
+        }
+        private static void DrawSortingOrder(Rect selectionRect,GameObject gameObject) {
+            var sortingGroup = gameObject.GetComponentInParent<SortingGroup>(true);
+            if(sortingGroup == null) sortingGroup = gameObject.GetComponent<SortingGroup>();
+            var renderer = gameObject.GetComponent<Renderer>();
+            if(renderer == null && sortingGroup == null) return;
+            var rendererText = renderer != null ? $"{LayerNameToNumber(renderer.sortingLayerName)}.{renderer.sortingOrder}" : "";
+            var groupText = sortingGroup != null ? $"{LayerNameToNumber(sortingGroup.sortingLayerName)}.{sortingGroup.sortingOrder}" : "";
+            var text = groupText.Length > 0 && rendererText.Length > 0 ? $"{groupText} (+{rendererText})"
+                : groupText.Length > 0 ? groupText : rendererText;
+            var rect = selectionRect;
+            rect.xMax -= 16;
+            rect.xMin = rect.xMax - 80;
+            var style = new GUIStyle(EditorStyles.label);
+            style.alignment = TextAnchor.MiddleRight;
+            style.normal.textColor = Color.white;
+            EditorGUI.LabelField(rect,text,style);
+        }
+        private static string LayerNameToNumber(string layerName) {
+            var numberCount = 0;
+            for(var i = layerName.Length - 1;i >= 0;i--) {
+                if(char.IsDigit(layerName[i]) == false) break;
+                numberCount++;
+            }
+            return layerName[^numberCount..];
         }
         private static void ResolveColor(GameObject gameObject,out MornHierarchyColor color,out float fade) {
             color = MornHierarchyColor.None;
