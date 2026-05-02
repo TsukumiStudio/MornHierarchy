@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 namespace MornHierarchy {
     public enum MornHierarchyColor {
         Red,
@@ -21,7 +22,7 @@ namespace MornHierarchy {
     }
     public class MornHierarchy : MonoBehaviour {
 #if UNITY_EDITOR
-        public bool IsLine;
+        [FormerlySerializedAs("IsLine")] public bool IsCenter;
         public Texture2D Icon;
         public MornHierarchyColor BackColor;
         public bool ApplyChildren;

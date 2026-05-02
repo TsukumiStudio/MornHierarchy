@@ -8,7 +8,7 @@ namespace MornHierarchy {
         private const float Spacing = 2f;
         public override void OnInspectorGUI() {
             serializedObject.Update();
-            EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(MornHierarchy.IsLine)));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(MornHierarchy.IsCenter)));
             DrawIconGrid(serializedObject.FindProperty(nameof(MornHierarchy.Icon)));
             EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(MornHierarchy.BackColor)));
             EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(MornHierarchy.ApplyChildren)));

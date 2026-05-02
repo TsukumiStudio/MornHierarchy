@@ -12,7 +12,7 @@ namespace MornHierarchy {
         private static void HierarchyWindowItemOnGUI(int instanceID,Rect selectionRect) {
             var gameObject = EditorUtility.InstanceIDToObject(instanceID) as GameObject;
             if(gameObject == null) return;
-            var isLine = gameObject.TryGetComponent<MornHierarchy>(out var hi) && hi.IsLine;
+            var isCenter = gameObject.TryGetComponent<MornHierarchy>(out var hi) && hi.IsCenter;
             ResolveColor(gameObject,out var effectiveColor,out var fade);
             EraseNativeText(instanceID,selectionRect);
             if(effectiveColor != MornHierarchyColor.None) {
@@ -21,7 +21,7 @@ namespace MornHierarchy {
                 fullRect.xMax = Mathf.Max(selectionRect.xMax,EditorGUIUtility.currentViewWidth);
                 DrawGradient(fullRect,ToColor(effectiveColor),fade);
             }
-            DrawLabel(selectionRect,gameObject,isLine);
+            DrawLabel(selectionRect,gameObject,isCenter);
             DrawIcon(selectionRect,gameObject);
         }
         private static void ResolveColor(GameObject gameObject,out MornHierarchyColor color,out float fade) {
