@@ -6,12 +6,21 @@ namespace MornHierarchy {
         private static void AddHierarchyItemOnGUI() {
             EditorApplication.hierarchyWindowItemOnGUI += HierarchyWindowItemOnGUI;
         }
+        private const float IconColumnX = 32f;
+        private const float IconColumnWidth = 16f;
         private static void HierarchyWindowItemOnGUI(int instanceID,Rect selectionRect) {
             var gameObject = EditorUtility.InstanceIDToObject(instanceID) as GameObject;
             if(gameObject == null) return;
             EraseNativeText(instanceID,selectionRect);
             DrawColor(selectionRect,gameObject);
             DrawLabel(selectionRect,gameObject);
+            DrawIcon(selectionRect,gameObject);
+        }
+        private static void DrawIcon(Rect selectionRect,GameObject gameObject) {
+            if(gameObject.TryGetComponent<MornHierarchy>(out var hi) == false) return;
+            if(hi.Icon == null) return;
+            var rect = new Rect(IconColumnX,selectionRect.y,IconColumnWidth,selectionRect.height);
+            GUI.DrawTexture(rect,hi.Icon,ScaleMode.ScaleToFit);
         }
         private static void EraseNativeText(int instanceID,Rect selectionRect) {
             var rect = selectionRect;
