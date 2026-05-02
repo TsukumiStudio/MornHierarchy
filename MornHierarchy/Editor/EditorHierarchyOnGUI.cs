@@ -27,14 +27,13 @@ namespace MornHierarchy {
             DrawSortingOrder(selectionRect,gameObject);
         }
         private static void DrawSortingOrder(Rect selectionRect,GameObject gameObject) {
+            var renderer = gameObject.GetComponent<Renderer>();
+            if(renderer == null) return;
             var sortingGroup = gameObject.GetComponentInParent<SortingGroup>(true);
             if(sortingGroup == null) sortingGroup = gameObject.GetComponent<SortingGroup>();
-            var renderer = gameObject.GetComponent<Renderer>();
-            if(renderer == null && sortingGroup == null) return;
-            var rendererText = renderer != null ? $"{LayerNameToNumber(renderer.sortingLayerName)}.{renderer.sortingOrder}" : "";
+            var rendererText = $"{LayerNameToNumber(renderer.sortingLayerName)}.{renderer.sortingOrder}";
             var groupText = sortingGroup != null ? $"{LayerNameToNumber(sortingGroup.sortingLayerName)}.{sortingGroup.sortingOrder}" : "";
-            var text = groupText.Length > 0 && rendererText.Length > 0 ? $"{groupText} (+{rendererText})"
-                : groupText.Length > 0 ? groupText : rendererText;
+            var text = groupText.Length > 0 ? $"{groupText} (+{rendererText})" : rendererText;
             var rect = selectionRect;
             rect.xMax -= 16;
             rect.xMin = rect.xMax - 80;
