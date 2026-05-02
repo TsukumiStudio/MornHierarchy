@@ -1,9 +1,27 @@
 ﻿using UnityEngine;
 namespace MornHierarchy {
+    public enum MornHierarchyColor {
+        Red,
+        Orange,
+        Yellow,
+        Lime,
+        Green,
+        Mint,
+        Cyan,
+        Blue,
+        Indigo,
+        Purple,
+        Magenta,
+        Pink,
+        Brown,
+        Gray,
+        White,
+        Black,
+    }
     public class MornHierarchy : MonoBehaviour {
 #if UNITY_EDITOR
         public bool EnableColor = true;
-        [ColorUsage(false)]public Color BackColor;
+        public MornHierarchyColor BackColor;
         public bool ApplyChildren;
         public Texture2D Icon;
         public bool IsLine;

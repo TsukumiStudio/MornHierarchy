@@ -60,7 +60,7 @@ namespace MornHierarchy {
             fullRect.xMin = 0;
             fullRect.xMax = Mathf.Max(selectionRect.xMax,EditorGUIUtility.currentViewWidth);
             if(gameObject.TryGetComponent<MornHierarchy>(out var ownColor) && ownColor.EnableColor) {
-                DrawTransparentRect(fullRect,ownColor.BackColor);
+                DrawTransparentRect(fullRect,ToColor(ownColor.BackColor));
                 return;
             }
             var mornHiArray = gameObject.GetComponentsInParent<MornHierarchy>(true);
@@ -70,13 +70,34 @@ namespace MornHierarchy {
                 if(hi.EnableColor == false) continue;
                 if(hi.ApplyChildren == false) return;
                 var kFront = GetKRecursion(hi.transform,gameObject.transform);
-                DrawTransparentRect(fullRect,hi.BackColor * kFront);
+                DrawTransparentRect(fullRect,ToColor(hi.BackColor) * kFront);
                 return;
             }
         }
         private static void DrawTransparentRect(Rect rect,Color color) {
             color.a = 0.3f;
             EditorGUI.DrawRect(rect,color);
+        }
+        public static Color ToColor(MornHierarchyColor c) {
+            switch(c) {
+                case MornHierarchyColor.Red:     return new Color(0.95f,0.30f,0.30f);
+                case MornHierarchyColor.Orange:  return new Color(1.00f,0.55f,0.20f);
+                case MornHierarchyColor.Yellow:  return new Color(1.00f,0.85f,0.20f);
+                case MornHierarchyColor.Lime:    return new Color(0.65f,0.95f,0.30f);
+                case MornHierarchyColor.Green:   return new Color(0.30f,0.80f,0.40f);
+                case MornHierarchyColor.Mint:    return new Color(0.40f,0.85f,0.70f);
+                case MornHierarchyColor.Cyan:    return new Color(0.30f,0.85f,0.95f);
+                case MornHierarchyColor.Blue:    return new Color(0.30f,0.55f,1.00f);
+                case MornHierarchyColor.Indigo:  return new Color(0.45f,0.40f,0.85f);
+                case MornHierarchyColor.Purple:  return new Color(0.65f,0.40f,0.85f);
+                case MornHierarchyColor.Magenta: return new Color(0.90f,0.40f,0.90f);
+                case MornHierarchyColor.Pink:    return new Color(1.00f,0.55f,0.75f);
+                case MornHierarchyColor.Brown:   return new Color(0.65f,0.45f,0.30f);
+                case MornHierarchyColor.Gray:    return new Color(0.65f,0.65f,0.65f);
+                case MornHierarchyColor.White:   return new Color(0.95f,0.95f,0.95f);
+                case MornHierarchyColor.Black:   return new Color(0.15f,0.15f,0.15f);
+            }
+            return Color.clear;
         }
         private static float GetKRecursion(Transform aim,Transform own) {
             if(aim == own) return 1f;
