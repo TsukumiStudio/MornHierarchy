@@ -6,18 +6,19 @@ namespace MornHierarchy {
         private const float ButtonSize = 18f;
         private const float Spacing = 2f;
         private const int Total = 17;
+        private static int CalcCols() {
+            var avail = EditorGUIUtility.currentViewWidth - EditorGUIUtility.labelWidth - 30f;
+            return Mathf.Max(1,Mathf.FloorToInt((avail + Spacing) / (ButtonSize + Spacing)));
+        }
         public override float GetPropertyHeight(SerializedProperty property,GUIContent label) {
-            var avail = EditorGUIUtility.currentViewWidth - EditorGUIUtility.labelWidth - 20f;
-            var cols = Mathf.Max(1,Mathf.FloorToInt((avail + Spacing) / (ButtonSize + Spacing)));
-            var rows = Mathf.CeilToInt(Total / (float)cols);
+            var rows = Mathf.CeilToInt(Total / (float)CalcCols());
             return rows * ButtonSize + (rows - 1) * Spacing;
         }
         public override void OnGUI(Rect position,SerializedProperty property,GUIContent label) {
             var labelRect = new Rect(position.x,position.y,EditorGUIUtility.labelWidth,EditorGUIUtility.singleLineHeight);
             EditorGUI.LabelField(labelRect,label);
             var gridX = position.x + EditorGUIUtility.labelWidth;
-            var gridWidth = position.xMax - gridX;
-            var cols = Mathf.Max(1,Mathf.FloorToInt((gridWidth + Spacing) / (ButtonSize + Spacing)));
+            var cols = CalcCols();
             var displayIdx = 0;
             DrawAt(displayIdx++,gridX,position.y,cols,MornHierarchyColor.None,property);
             foreach(MornHierarchyColor c in System.Enum.GetValues(typeof(MornHierarchyColor))) {
