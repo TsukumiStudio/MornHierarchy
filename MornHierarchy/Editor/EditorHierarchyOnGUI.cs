@@ -12,7 +12,11 @@ namespace MornHierarchy {
         private const float IconColumnWidth = 16f;
         private const float IconSize = 12f;
         private static void HierarchyWindowItemOnGUI(int instanceID,Rect selectionRect) {
+#if UNITY_6000_2_OR_NEWER
             var gameObject = EditorUtility.EntityIdToObject(instanceID) as GameObject;
+#else
+            var gameObject = EditorUtility.InstanceIDToObject(instanceID) as GameObject;
+#endif
             if(gameObject == null) return;
             // Prefab Edit Mode の "Prefab Mode in Context" 等、 prefabContentsRoot より上のヘッダ行は MornHierarchy の介入対象外。
             // Unity 標準描画 (灰色) をそのまま見せる。
@@ -147,7 +151,11 @@ namespace MornHierarchy {
         private static Color GetRowBackgroundColor(int instanceID,Rect rect) {
             var isFocused = EditorWindow.focusedWindow != null
                 && EditorWindow.focusedWindow.GetType().Name == "SceneHierarchyWindow";
+#if UNITY_6000_2_OR_NEWER
             if(Selection.Contains((EntityId)instanceID)) {
+#else
+            if(Selection.Contains(instanceID)) {
+#endif
                 return isFocused ? new Color32(44,93,134,255) : new Color32(77,77,77,255);
             }
             if(rect.Contains(Event.current.mousePosition)) return new Color32(68,68,68,255);
